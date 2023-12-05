@@ -1,3 +1,49 @@
+libsilkit (4.0.42-1) unstable; urgency=medium
+
+  * LIN Demo: Adapted the schedule of the LIN Master and disallowed sending while in wrong controller state.
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Tue, 28 Nov 2023 10:00:00 +0200
+
+libsilkit (4.0.41) unstable; urgency=medium
+
+  * Potential deadlock when switching to virtual time-synchronization while replay is in use
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Mon, 27 Nov 2023 10:10:00 +0200
+
+libsilkit (4.0.40) unstable; urgency=medium
+
+  * Allow configuration of the connection timeout (``Middleware/ConnectTimeoutSeconds``)
+
+  * Improved the documentation of Data Pub/Sub controllers
+  * Improved the documentation of RPC controllers
+  * The LIN demo does not skip the first entry (sending frame 16) on all but the first iteration through the schedule anymore.
+  * The name of the domain-socket used by the registry will use the hostname passed in the listen URI, not the resolved IP address (if any), for generating the name of the domain-socket.
+  * When mixing autonomous participants without time-synchronization, and participants with time-synchronization,
+  the timestamps for messages received before the virtual time is started, is now the 'invalid' timestamp value,
+  normally used by participants without time-synchronization.
+  * Reworked the pause/continue logic such that it pauses the virtual time synchronization without blocking the I/O thread.
+
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Thu, 23 Nov 2023 10:12:00 +0200
+
+libsilkit (4.0.39) unstable; urgency=medium
+
+  * Replaced remaining mentions of integrators with users.
+  * Usage examples for tracing and replay.
+  * Timeouts per connection attempt.
+  * Two-sided connection establishment: Allow direct connections, even if connections are only possible in one direction.
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Fri, 24 Nov 2023 10:00:00 +0200
+
+libsilkit (4.0.39) unstable; urgency=medium
+
+  * The dashboard now handles AbortSimulation.
+  * The dashboard resolves the registry IP address if needed.
+  * Reintroduced build requirements to documentation
+  * Consolidate SIL Kit tests into four executables
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Thu, 23 Nov 2023 10:12:00 +0200
+
 libsilkit (4.0.37-1) unstable; urgency=medium
 
   * Reworked the documentation on Virtual Time Synchronization
