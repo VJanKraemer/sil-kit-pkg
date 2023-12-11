@@ -34,7 +34,7 @@ cd libsilkit-${SILKIT_VERSION}/
 echo "Running dh_make"
 dh_make -ly
 ret_val=$?
-if test "$ret_val" != '0' ; then
+if [ "$ret_val" -gt '1' ] ; then
     echo "SILKIT-PKG: \"dh_make -ly\" exit code $ret_val"
     exit 64
 fi
