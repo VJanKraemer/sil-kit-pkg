@@ -31,7 +31,7 @@ on:
 
 jobs:
   package_debian:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Job to build debian packages
     steps:
       - name: Setup
