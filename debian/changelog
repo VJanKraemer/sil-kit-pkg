@@ -1,3 +1,11 @@
+libsilkit (4.0.50-1) UNRELEASED; urgency=medium
+
+  * The ``--enable-dashboard`` CLI parameter for the registry is now a no-op.
+    It is now activated when using ``--dash board-uri`` or via the registry configuration.
+  * We now use a linker script to limit the exported symbol visibility to the public C API and some legacy C++ symbol
+
+ -- Jan Kraemer <jan.kraemer@vector.com>  Wed, 07 Feb 2024 08:56:00 +0200
+
 libsilkit (4.0.47-1) unstable; urgency=medium
 
   * Initial Package
