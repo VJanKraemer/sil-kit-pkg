@@ -37,17 +37,24 @@ if [ -n "${CI_RUN+1}" ] ; then
     echo "Saving VERSION and REVISION to Github step outputs!"
     echo "silkit_version=${SILKIT_VERSION}" >> "$GITHUB_OUTPUT"
     echo "silkit_debian_revision=${SILKIT_DEBIAN_REVISION}" >> "$GITHUB_OUTPUT"
-fi
 
+    if [ -n "${RELEASE_CANDIDAT+1}" ] ; then
+        echo "silkit_rc=\"-rc\"" >> "GITHUB_OUTPUT"
+    else
+        echo "silkit_rc=\"\"" >> "GITHUB_OUTPUT"
+    fi
+fi
 
 ## Set GIT Options
 if [ -n SILKIT_VENDORED_PACKAGES ] ; then
-   SUBMODULE_CMD="--recurse-submodules --shallow-submodules"
+    echo "Vendoring Packages!"
+    SUBMODULE_CMD="--recurse-submodules --shallow-submodules"
 else
-   SUBMODULE_CMD=""
+    SUBMODULE_CMD=""
 fi
 
-
+# Since we want to allow building SIL KIT from VERSIONS different from the current CHANGELOG Version
+# We need to distinguish how to checkout and reset the local git repo
 if [ -n SILKIT_REVISION ] ; then
     CLONE_VERSION="main"
 else
@@ -66,13 +73,25 @@ if [ ! -d ./libsilkit-${SILKIT_VERSION} ]; then
     exit 64
 fi
 
-echo "SILKIT REVISION: ${SILKIT_REVISION}"
-echo
 if [ -n $SILKIT_REVISION ] ; then
-    echo "GETTING TAGS"
+    echo "WARNING: SILKIT GIT REF specified! MAKE SURE THAT THIS VERSION IS COMPATIBLE WITH THE VERSION SPECIFIED IN THE DEBIAN/UBUNTU CHANGELOG!"
+    echo "SILKIT REVISION: ${SILKIT_REVISION}"
+    echo "TRY GETTING REF AS TAGS"
     git -c http.sslVerify=false -C ./libsilkit-${SILKIT_VERSION} fetch --depth=1 origin refs/tags/${SILKIT_REVISION}:refs/tags/${SILKIT_REVISION} --no-tags
-    echo "RESETTING TO TAGS"
+    ret_val=$?
+    if [ "$ret_val" != '0' ] ; then
+        echo "TRY GETTING REF AS COMMIT SHA"
+        git -c http.sslVerify=false -C ./libsilkit-${SILKIT_VERSION} fetch --depth=1 origin ${SILKIT_REVISION}
+        ret_val=$?
+    fi
+
+    if [ "$ret_val" != '0' ] ; then
+        echo "Could not find REF $SILKIT_REVISION in $SILKIT_SOURCE_URL\nExiting"
+        exit 64
+    fi
+    echo "RESETTING TO REF: $SILKIT_REVISION"
     git -C ./libsilkit-${SILKIT_VERSION} reset --hard ${SILKIT_REVISION}
+    ls -la ./libsilkit-${SILKIT_VERSION}/ThirdParty/googletest/
 fi
 
 tar --exclude='.git' -cJf libsilkit_${SILKIT_VERSION}.orig.tar.xz -C libsilkit-${SILKIT_VERSION} .
