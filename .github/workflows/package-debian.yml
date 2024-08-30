@@ -67,7 +67,7 @@ jobs:
         id: build
         env:
           SILKIT_SOURCE_URL: ${{ github.workspace }}/_i/sil-kit
-          SILKIT_PKG_URL: ${{ github.workspace }}_i/${{ inputs.silkit_pkg_url }}
+          SILKIT_PKG_URL: ${{ github.workspace }}/_i/sil-kit-pkg
           DEBFULLNAME: ${{ inputs.debian_fullname }}
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
