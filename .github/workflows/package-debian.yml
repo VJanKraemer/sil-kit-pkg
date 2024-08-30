@@ -39,8 +39,8 @@ jobs:
 
       - name: Workspace Preparation
         run: |
-          mdkir -pv "${{ github.workspace }}"/_i
-          mdkir -pv "${{ github.workspace }}"/_o
+          mkdir -pv "${{ github.workspace }}"/_i
+          mkdir -pv "${{ github.workspace }}"/_o
 
       - name: Checkout (sil-kit-pkg)
         uses: actions/checkout@v4
