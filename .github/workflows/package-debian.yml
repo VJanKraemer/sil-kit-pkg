@@ -91,10 +91,10 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: |
-            ${{ github.workspace }}/_i/*.dsc
-            ${{ github.workspace }}/_i/*.build*
-            ${{ github.workspace }}/_i/*.changes
-            ${{ github.workspace }}/_i/*.*deb
+            _i/*.dsc
+            _i/*.build*
+            _i/*.changes
+            _i/*.*deb
           retention-days: 1
 
       - name: Prepare artifact
