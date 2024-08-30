@@ -102,7 +102,7 @@ jobs:
         env:
           ARTIFACT_NAME: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
         run: |
-          zip _o/${{ env.ARTIFACT_NAME }}.zip ./*.dsc ./*.build* ./*.changes ./*.*deb
+          zip _o/${{ env.ARTIFACT_NAME }}.zip _i/*.dsc _i/*.build* _i/*.changes _i/*.*deb
           sha256sum _o/${{ env.ARTIFACT_NAME }}.zip > _o/SHA256
 
       - name: Create git tag
