@@ -98,7 +98,7 @@ jobs:
           retention-days: 1
 
       - name: Prepare artifact
-        if: inputs.silkit_pkg_tag != ''
+        if: inputs.silkit_pkg_ref != ''
         env:
           ARTIFACT_NAME: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
         run: |
@@ -106,7 +106,7 @@ jobs:
           sha256sum _o/${{ env.ARTIFACT_NAME }}.zip > _o/SHA256
 
       - name: Create git tag
-        if: inputs.silkit_pkg_tag != ''
+        if: inputs.silkit_pkg_ref != ''
         uses: actions/github-script@v7
         with:
           script: |
@@ -114,7 +114,7 @@ jobs:
               await github.rest.git.createRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: 'refs/tags/${{ inputs.silkit_pkg_tag }}',
+                ref: 'refs/tags/${{ inputs.silkit_pkg_ref }}',
                 sha: context.sha,
               })
             } catch(error) {
@@ -122,15 +122,15 @@ jobs:
             }
 
       - name: Release artifact
-        if: inputs.silkit_pkg_tag != ''
+        if: inputs.silkit_pkg_ref != ''
         env:
           ARTIFACT_NAME: libsilkit4_${{ steps.build.outputs.silkit_version }}-${{ steps.build.outputs.silkit_debian_revision }}_${{ inputs.debian_arch }}
         uses: softprops/action-gh-release@v2
         with:
-          prerelease: ${{ contains(inputs.silkit_pkg_tag, '-rc') }}
+          prerelease: ${{ contains(inputs.silkit_pkg_ref, '-rc') }}
           draft: false
-          tag_name: ${{ inputs.silkit_pkg_tag }}
-          name: ${{ inputs.silkit_pkg_tag }}
+          tag_name: ${{ inputs.silkit_pkg_ref }}
+          name: ${{ inputs.silkit_pkg_ref }}
           files: |
             _o/${{ env.ARTIFACT_NAME }}.zip
             _o/SHA256
