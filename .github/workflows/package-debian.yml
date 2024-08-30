@@ -80,7 +80,7 @@ jobs:
           DEB_DIR: ${{ github.workspace }}/_i/
           TEST_DIR: ${{ github.workspace }}/_i/sil-kit-pkg/tests
         run: |
-          python3 ${{ github.workspace }}/_i/sil-kit-pkg/tests/test_deb.py \
+          python3 _i/sil-kit-pkg/tests/test_deb.py \
           --deb-directory "$DEB_DIR" \
           --package-directory "$TEST_DIR"
 
