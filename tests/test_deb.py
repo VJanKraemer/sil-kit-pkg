@@ -30,9 +30,7 @@ def install_debs(deb_directory):
     print("--------------------------------\n")
     debs = deb_directory.glob('*.deb')
     str_args = [str(deb.resolve()) for deb in debs]
-    print(str_args)
-    args = ['apt', 'install'] + str_args
-    print (f"args: {args}")
+    args = ['apt', 'install', '-y'] + str_args
 
     try:
         subprocess.run(args, check=True)
