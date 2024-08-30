@@ -29,8 +29,10 @@ def install_debs(deb_directory):
     print("\nInstall SilKit Ubuntu packages")
     print("--------------------------------\n")
     debs = deb_directory.glob('*.deb')
-    str_args = ['./'+str(deb) for deb in debs]
+    str_args = [str(deb.resolve()) for deb in debs]
+    print(str_args)
     args = ['apt', 'install'] + str_args
+    print (f"args: {args}")
 
     try:
         subprocess.run(args, check=True)
