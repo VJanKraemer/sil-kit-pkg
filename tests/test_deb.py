@@ -67,6 +67,7 @@ def close_registry(reg_proc: subprocess.Popen):
 
 def build_test(test_dir):
 
+    print("\nBuild the SilKit Test program")
     print("--------------------------------\n")
     # Clean the workspace
     subprocess.run(['rm', '-rf', '_build'], cwd=test_dir, check=True)
