@@ -27,7 +27,7 @@ def create_arg_parser() -> ArgumentParser:
 def install_debs(deb_directory):
 
     print("\nInstall SilKit Ubuntu packages")
-    print("--------------------------------\n")
+    print("--------------------------------\n", flush=True)
     debs = deb_directory.glob('*.deb')
     str_args = [str(deb.resolve()) for deb in debs]
     args = ['apt', 'install', '-y'] + str_args
@@ -41,7 +41,7 @@ def install_debs(deb_directory):
 def run_registry():
 
     print("\nRun sil-kit-registry")
-    print("--------------------------------\n")
+    print("--------------------------------\n", flush=True)
     cmd = 'sil-kit-registry'
     registry_proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE)
     sleep(2)
@@ -55,7 +55,7 @@ def run_registry():
 def close_registry(reg_proc: subprocess.Popen):
 
     print("\nClose the SIL Kit registry")
-    print("--------------------------------\n")
+    print("--------------------------------\n", flush=True)
 
     reg_proc.communicate(b'\n', 5)
 
@@ -68,7 +68,7 @@ def close_registry(reg_proc: subprocess.Popen):
 def build_test(test_dir):
 
     print("\nBuild the SilKit Test program")
-    print("--------------------------------\n")
+    print("--------------------------------\n", flush=True)
     # Clean the workspace
     subprocess.run(['rm', '-rf', '_build'], cwd=test_dir, check=True)
     # Create the build dir
@@ -88,7 +88,7 @@ def build_test(test_dir):
 def run_test(build_dir):
 
     print("\nRun the SilKit Test program")
-    print("--------------------------------\n")
+    print("--------------------------------\n", flush=True)
     try:
         subprocess.run(['./Test'], cwd=build_dir, check=True)
     except:
