@@ -78,11 +78,11 @@ jobs:
         id: test
         env:
           DEB_DIR: ${{ github.workspace }}/_i/
-          TEST_DIR: ${{ github.workspace }}/_i/sil-kit-pkg/tests
+          PKG_DIR: ${{ github.workspace }}/_i/sil-kit-pkg/
         run: |
           python3 _i/sil-kit-pkg/tests/test_deb.py \
           --deb-directory "$DEB_DIR" \
-          --package-directory "$TEST_DIR"
+          --package-directory "$PKG_DIR"
 
       - name: Artifact
         env:
