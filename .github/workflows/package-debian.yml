@@ -30,7 +30,7 @@ on:
         type: string
 
 env:
-  ARTIFACT_NAME: silkit-ubuntu-20.04-deb.zip
+  ARTIFACT_NAME: silkit-ubuntu-20.04-deb
 
 jobs:
   package_debian:
