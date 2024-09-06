@@ -1,5 +1,6 @@
 #! /bin/env python3
 import argparse
+import json
 import logging
 import shutil
 import subprocess
@@ -14,7 +15,7 @@ class SilKitVersion:
     major: int
     minor: int
     patch: int
-    debian_suffix: str
+    suffix: str
 
 @dataclass
 class SilKitInfo:
@@ -29,9 +30,9 @@ class BuildInfo:
 
     silkit_pkg_path: Path
     silkit_info: SilKitInfo
-    version: str
+    version: SilKitVersion
+    platform: str
     work_dir: Path
-    silkit_version: SilKitVersion
     keep_temp: bool
     output_dir: Path
 
@@ -46,16 +47,17 @@ logger = logging.getLogger(__name__)
 
 def create_arg_parser() -> ArgumentParser:
     ap = ArgumentParser("BuildPackages")
-    ap.add_argument("--ubuntu-version", type=str, required=True)
-    ap.add_argument("--silkit-pkg-path", type=Path, required=True)
-    ap.add_argument("--silkit-pkg-tag", type=str, required=False)
-    ap.add_argument("--silkit-source-url", type=str, required=True)
-    ap.add_argument("--silkit-source-ref", type=str, required=True)
+    ap.add_argument("--build-cfg", type=Path, required=True)
     ap.add_argument("--verbose", action='store_true', required=False)
-    ap.add_argument("--keep-temp", action='store_true', required=False, default=False)
-    ap.add_argument("--output-dir", type=str, required=False, default=Path.cwd() / 'output')
 
     return ap
+
+def load_cfg(cfg_path: Path):
+
+    with open(cfg_path, 'r') as f:
+        obj = json.load(f)
+        print(obj)
+        return obj
 
 def cleanup(build_info: BuildInfo, exitCode: int):
     
@@ -68,20 +70,29 @@ def cleanup(build_info: BuildInfo, exitCode: int):
 
     exit(exitCode)
 
-def generate_buildinfo(args) -> BuildInfo:
+def generate_buildinfo(cfg) -> BuildInfo:
+
+    silkit_info = SilKitInfo(
+                silkit_source_url=cfg["SilKitInfo"]["url"],
+                silkit_source_ref=cfg["SilKitInfo"]["ref"],
+                is_local=cfg["SilKitInfo"]["is_local"],
+                recursive=cfg["SilKitInfo"]["recursive"],
+                silkit_source_path=None)
+
+    silkit_version = SilKitVersion(
+            major=cfg["version"]["major"],
+            minor=cfg["version"]["minor"],
+            patch=cfg["version"]["patch"],
+            suffix=cfg["version"]["suffix"])
+
     build_info = BuildInfo(
-            silkit_pkg_path=Path(args.silkit_pkg_path),
-            silkit_info=SilKitInfo(
-                silkit_source_url=args.silkit_source_url,
-                silkit_source_ref=args.silkit_source_ref,
-                silkit_source_path=None,
-                is_local=False,
-                recursive=True),
-            version=None,
-            work_dir=None,
-            silkit_version=None,
-            keep_temp = args.keep_temp,
-            output_dir= args.output_dir
+            silkit_pkg_path=Path(cfg["package_repo_path"]),
+            silkit_info=silkit_info,
+            version=silkit_version,
+            work_dir=Path(cfg["work_dir"]),
+            keep_temp=cfg["keep_temp"],
+            output_dir=Path(cfg["output_dir"]),
+            platform=cfg["platform"]
     )
     logger.debug(f"build_info: {build_info}")
     return build_info
@@ -116,7 +127,7 @@ def clone_silkit(build_info: BuildInfo):
 
     except Exception as ex:
         logger.error(f"While cloning the SilKit Repo something occured: {str(ex)}")
-        cleanup(build_info)
+        cleanup(build_info, 64)
 
 
 def get_silkit_repo(build_info: BuildInfo):
@@ -170,23 +181,22 @@ def get_deb_version(build_info: BuildInfo):
         for line in f:
             result = re.match(pattern, line)
             if result:
-                build_info.silkit_version = SilKitVersion(
+                build_info.version = SilKitVersion(
                     major=result.group(1),
                     minor=result.group(2),
                     patch=result.group(3),
-                    debian_suffix=result.group(4))
+                    suffix=result.group(4))
 
-            logger.debug(f'SilKitVersion: {build_info.silkit_version}')
+            logger.debug(f'SilKitVersion: {build_info.version}')
             return
 
-def create_work_directory() -> Path:
+def create_work_directory(build_info: BuildInfo) -> Path:
 
-    work_dir = Path.cwd() / 'package_workspace';
+    work_dir = Path.cwd() / build_info.work_dir;
     logger.debug(f"Creating {work_dir} work dir!")
 
     try:
         Path.mkdir(work_dir, exist_ok=True)
-        return work_dir
     except Exception as ex:
         logger.error(f"While creating the workdir an error occured: {str(ex)}")
         # No need for cleanup, nothing of value created yet
@@ -194,7 +204,7 @@ def create_work_directory() -> Path:
 
 def create_orig_tarball(build_info: BuildInfo):
     
-    silkit_version = build_info.silkit_version
+    silkit_version = build_info.version
 
     if silkit_version == None:
         logger.error("No valid SilKit Version found! Exiting!")
@@ -220,6 +230,14 @@ def copy_debian_dir(build_info: BuildInfo):
         logger.error("Could not copy the debian dir into the sil kit source dir! Exiting")
         logger.debug(f"Python Exception: {str(ex)}")
         cleanup(build_info, 64)
+
+def parse_platform(platform: str) -> str:
+
+    dist, version = platform.split('-')
+    print(f"Building for {dist} version {version}")
+
+    return version
+
 
 def get_build_flags(ubuntu_version: str) -> BuildFlags:
     
@@ -247,10 +265,11 @@ def get_build_flags(ubuntu_version: str) -> BuildFlags:
 
 def build_package(build_flags: BuildFlags, build_info: BuildInfo):
 
-    
-    debuild_cmd = ['debuild',
-                build_flags.add_debuild_flags, 
-                f'--set-envvar=PLATFORM_BUILD_FLAGS={build_flags.add_platform_flags}',
+    platform_build_flags = f'--set-envvar=PLATFORM_BUILD_FLAGS={build_flags.add_platform_flags}' if build_flags.add_platform_flags != '' else ''
+
+    debuild_flags = build_flags.add_debuild_flags.split(' ')
+    logger.debug(f"Additional debuild flags: {debuild_flags}")
+    debuild_cmd = ['debuild'] + debuild_flags + [platform_build_flags,
                 f'--set-envvar=CC={build_flags.c_compiler}',
                 f'--set-envvar=CXX={build_flags.cxx_compiler}',
                 '-us',
@@ -263,6 +282,7 @@ def build_package(build_flags: BuildFlags, build_info: BuildInfo):
     # exec land
     debuild_cmd = list(filter(lambda arg: arg != '', debuild_cmd))
 
+    logger.debug(f"CMD LIST: {debuild_cmd}")
     logger.debug(f"Calling: {' '.join(debuild_cmd)}")
     subprocess.run(debuild_cmd,
                 check=True,
@@ -288,15 +308,17 @@ def main():
 
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG, format='%(message)s')
-    build_info = generate_buildinfo(args)
 
-    build_info.work_dir = create_work_directory()
+    cfg = load_cfg(args.build_cfg)
+    build_info = generate_buildinfo(cfg)
+
+    create_work_directory(build_info)
     get_silkit_repo(build_info)
     check_debian_directory(build_info)
-    get_deb_version(build_info)
+    #get_deb_version(build_info)
     create_orig_tarball(build_info)
     copy_debian_dir(build_info)
-    build_flags = get_build_flags(args.ubuntu_version)
+    build_flags = get_build_flags(parse_platform(build_info.platform))
     logger.info(f"Got build_flags: {build_flags}")
     build_package(build_flags, build_info)
     copy_artifacts(build_info)

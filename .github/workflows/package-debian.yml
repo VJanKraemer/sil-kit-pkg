@@ -31,6 +31,27 @@ on:
 
 env:
   ARTIFACT_NAME: silkit-ubuntu-20.04-deb
+  BUILD_SETTINGS: |
+      {
+
+          "SilKitInfo": {
+              "url": "${{ github.workspace }}/sil-kit.git",
+              "ref": "",
+              "recursive": true,
+              "is_local": true
+          },
+          "package_repo_path": "${{ github.workspace }}/sil-kit-pkg",
+          "version": {
+              "major": 4,
+              "minor": 0,
+              "patch": 52,
+              "suffix": "rc-5"
+          },
+          "work_dir": "${{ github.workspace }}/_i",
+          "keep_temp": true,
+          "output_dir": "${{ github.workspace }}/_o",
+          "platform": "Ubuntu-20.04"
+      }
 
 jobs:
   package_debian:
@@ -64,13 +85,12 @@ jobs:
       - name: Build
         id: build
         env:
-          SILKIT_SOURCE_URL: ${{ github.workspace }}/sil-kit
-          SILKIT_PKG_URL: ${{ github.workspace }}/sil-kit-pkg
           DEBFULLNAME: ${{ inputs.debian_fullname }}
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
         run: |
-          sh sil-kit-pkg/.github/actions/build_deb.sh 20.04
+          echo $BUILD_SETTINGS >> _i/build_settings.json
+          sh sil-kit-pkg/scripts/build_deb.py _i/build_settings.json
 
       - name: Test Package
         id: test
