@@ -89,8 +89,8 @@ jobs:
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
         run: |
-          mkdir ${{ github.workspace }}/_i/
-          mkdir ${{ github.workspace }}/_o/
+          mkdir -p ${{ github.workspace }}/_i/
+          mkdir -p ${{ github.workspace }}/_o/
           echo $BUILD_SETTINGS >> _i/build_settings.json
           python3 sil-kit-pkg/scripts/build_deb.py _i/build_settings.json
 
