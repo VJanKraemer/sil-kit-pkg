@@ -95,7 +95,7 @@ jobs:
           echo "Current Dir: $PWD"
           ls -la ./sil-kit-pkg/scripts/
           echo $BUILD_SETTINGS >> ${{ github.workspace }}/_i/build_settings.json
-          python3 /_w/sil-kit-pkg/sil-kit-pkg/sil-kit-pkg/scripts/build_deb.py _i/build_settings.json
+          python3 /__w/sil-kit-pkg/sil-kit-pkg/sil-kit-pkg/scripts/build_deb.py _i/build_settings.json
 
       - name: Test Package
         id: test
