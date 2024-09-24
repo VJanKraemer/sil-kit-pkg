@@ -92,7 +92,7 @@ jobs:
           mkdir ${{ github.workspace }}/_i/
           mkdir ${{ github.workspace }}/_o/
           echo $BUILD_SETTINGS >> _i/build_settings.json
-          sh sil-kit-pkg/scripts/build_deb.py _i/build_settings.json
+          python3 sil-kit-pkg/scripts/build_deb.py _i/build_settings.json
 
       - name: Test Package
         id: test
