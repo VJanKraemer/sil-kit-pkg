@@ -60,7 +60,7 @@ jobs:
     container:
       image: ghcr.io/mariusbgm/sil-kit-ci-ubuntu-20.04:main
     env:
-      GH_WS: $GITHUB_WORKSPACE
+      GH_WS: ${{ env.GITHUB_WORKSPACE }}
     steps:
 
       - name: Checkout (sil-kit-pkg)
