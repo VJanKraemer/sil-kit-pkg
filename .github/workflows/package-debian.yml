@@ -95,7 +95,7 @@ jobs:
           echo "Current Dir: $PWD"
           ls -la ./sil-kit-pkg/scripts/
           echo $BUILD_SETTINGS >> ${{ github.workspace }}/_i/build_settings.json
-          python3 /__w/sil-kit-pkg/sil-kit-pkg/sil-kit-pkg/scripts/build_deb.py --build-cfg _i/build_settings.json
+          python3 GITHUB_WORKSPACE/sil-kit-pkg/scripts/build_deb.py --build-cfg GITHUB_WORKSPACE/_i/build_settings.json
 
       - name: Test Package
         id: test
@@ -103,7 +103,7 @@ jobs:
           DEB_DIR: ${{ github.workspace }}
           PKG_DIR: ${{ github.workspace }}/sil-kit-pkg/
         run: |
-          python3 ${{ github.workspace }}/tests/test_deb.py \
+          python3 GITHUB_WORKSPACE/tests/test_deb.py \
           --deb-directory "$DEB_DIR" \
           --package-directory "$PKG_DIR"
 
