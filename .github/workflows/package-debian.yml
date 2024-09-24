@@ -63,6 +63,8 @@ jobs:
 
       - name: Checkout (sil-kit-pkg)
         uses: actions/checkout@v4
+        with:
+          path: sil-kit-pkg
 
       - name: Checkout (sil-kit)
         uses: actions/checkout@v4
@@ -79,8 +81,9 @@ jobs:
       - name: Install cmake
         run: |
           echo $PWD
+          ls -la
           echo ${{ github.workspace }}
-          sh .github/actions/fetch_cmake.sh
+          sh sil-kit-pkg/.github/actions/fetch_cmake.sh
 
       - name: Build
         id: build
@@ -92,6 +95,7 @@ jobs:
           mkdir -p ${{ github.workspace }}/_i/
           mkdir -p ${{ github.workspace }}/_o/
           echo $PWD
+          ls -la
           echo $BUILD_SETTINGS >> ${{ github.workspace }}/_i/build_settings.json
           python3 ${{ github.workspace }}/scripts/build_deb.py _i/build_settings.json
 
