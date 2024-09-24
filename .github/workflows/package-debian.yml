@@ -80,8 +80,6 @@ jobs:
 
       - name: Install cmake
         run: |
-          echo $PWD
-          ls -la
           echo ${{ github.workspace }}
           sh sil-kit-pkg/.github/actions/fetch_cmake.sh
 
@@ -92,12 +90,12 @@ jobs:
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
         run: |
-          mkdir -p ${{ github.workspace }}/_i/
-          mkdir -p ${{ github.workspace }}/_o/
-          echo $PWD
+          mkdir -p ${{ github.workspace }}/_i
+          mkdir -p ${{ github.workspace }}/_o
+          echo "Current Dir: $PWD"
           ls -la
           echo $BUILD_SETTINGS >> ${{ github.workspace }}/_i/build_settings.json
-          python3 ${{ github.workspace }}/scripts/build_deb.py _i/build_settings.json
+          python3 ${{ github.workspace }}/sil-kit-pkg/scripts/build_deb.py _i/build_settings.json
 
       - name: Test Package
         id: test
