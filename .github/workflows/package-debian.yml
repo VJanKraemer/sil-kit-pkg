@@ -63,8 +63,6 @@ jobs:
 
       - name: Checkout (sil-kit-pkg)
         uses: actions/checkout@v4
-        with:
-          path: sil-kit-pkg
 
       - name: Checkout (sil-kit)
         uses: actions/checkout@v4
