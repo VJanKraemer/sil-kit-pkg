@@ -92,8 +92,8 @@ jobs:
           mkdir -p ${{ github.workspace }}/_i/
           mkdir -p ${{ github.workspace }}/_o/
           echo $PWD
-          echo $BUILD_SETTINGS >> ./_i/build_settings.json
-          python3 ./scripts/build_deb.py _i/build_settings.json
+          echo $BUILD_SETTINGS >> ${{ github.workspace }}/_i/build_settings.json
+          python3 ${{ github.workspace }}/scripts/build_deb.py _i/build_settings.json
 
       - name: Test Package
         id: test
@@ -101,7 +101,7 @@ jobs:
           DEB_DIR: ${{ github.workspace }}
           PKG_DIR: ${{ github.workspace }}/sil-kit-pkg/
         run: |
-          python3 ./tests/test_deb.py \
+          python3 ${{ github.workspace }}/tests/test_deb.py \
           --deb-directory "$DEB_DIR" \
           --package-directory "$PKG_DIR"
 
