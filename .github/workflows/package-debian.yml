@@ -93,7 +93,7 @@ jobs:
           mkdir -p ${{ github.workspace }}/_i
           mkdir -p ${{ github.workspace }}/_o
           echo "Current Dir: $PWD"
-          ls -la
+          ls -la ./sil-kit-pkg/
           echo $BUILD_SETTINGS >> ${{ github.workspace }}/_i/build_settings.json
           python3 ${{ github.workspace }}/sil-kit-pkg/scripts/build_deb.py _i/build_settings.json
 
