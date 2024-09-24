@@ -78,6 +78,8 @@ jobs:
 
       - name: Install cmake
         run: |
+          echo $PWD
+          echo ${{ github.workspace }}
           sh sil-kit-pkg/.github/actions/fetch_cmake.sh
 
       - name: Build
