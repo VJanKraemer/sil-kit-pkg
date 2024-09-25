@@ -90,6 +90,8 @@ jobs:
         run: |
           mkdir _i
           mkdir _o
+          stat _i
+          ls -la
 
       - name: Build
         id: build
