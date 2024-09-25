@@ -82,7 +82,7 @@ jobs:
 
       - name: Install cmake
         run: |
-          echo "Current workspace: $GW"
+          echo "Current workspace: $GH_WS"
           sh sil-kit-pkg/.github/actions/fetch_cmake.sh
 
       - name: Build
@@ -93,8 +93,8 @@ jobs:
           CI_RUN: "1"
         run: |
           echo "Running in $PWD"
-          mkdir -p $GH_WS/_i
-          mkdir -p $GH_WS/_o
+          mkdir -p /__w/sil-kit-pkg/sil-kit-pkg/_i
+          mkdir -p /__w/sil-kit-pkg/sil-kit-pkg/_o
           echo $BUILD_SETTINGS >> $GH_WS/_i/build_settings.json
           python3 $GH_WS/sil-kit-pkg/scripts/build_deb.py --build-cfg $GH_WS/_i/build_settings.json
 
