@@ -100,7 +100,7 @@ jobs:
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
         run: |
-          echo $BUILD_SETTINGS >> _i/build_cfg.json
+          echo $BUILD_SETTINGS > $PWD/_i/build_cfg.json
           python3 sil-kit-pkg/scripts/build_deb.py \
           --build-cfg _i/build_cfg.json
           --verbose
