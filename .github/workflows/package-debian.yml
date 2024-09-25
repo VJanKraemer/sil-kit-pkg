@@ -85,6 +85,12 @@ jobs:
           echo "Current workspace: $GH_WS"
           sh sil-kit-pkg/.github/actions/fetch_cmake.sh
 
+      - name: Setup Workspace
+        id: setup-ws
+        run: |
+          mkdir _i
+          mkdir _o
+
       - name: Build
         id: build
         env:
@@ -92,8 +98,6 @@ jobs:
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
         run: |
-          mkdir _i
-          mkdir _o
           echo $BUILD_SETTINGS >> _i/build_cfg.json
           python3 sil-kit-pkg/scripts/build_deb.py \
           --build-cfg _i/build_cfg.json
