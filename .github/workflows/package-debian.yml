@@ -92,15 +92,15 @@ jobs:
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
         run: |
-          echo "Why Github...why!!"
+          mkdir _i
 
       - name: Test Package
         id: test
         env:
-          DEB_DIR: ${{ github.workspace }}
-          PKG_DIR: ${{ github.workspace }}/sil-kit-pkg/
+          DEB_DIR: $PWD
+          PKG_DIR: ./sil-kit-pkg/
         run: |
-          python3 $GH_WS/tests/test_deb.py \
+          python3 sil-kit-pkg/tests/test_deb.py \
           --deb-directory "$DEB_DIR" \
           --package-directory "$PKG_DIR"
 
