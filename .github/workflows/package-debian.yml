@@ -31,27 +31,6 @@ on:
 
 env:
   ARTIFACT_NAME: silkit-ubuntu-20.04-deb
-  BUILD_SETTINGS: |
-      {
-
-          "SilKitInfo": {
-              "url": "$GITHUB_WORKSPACE/sil-kit.git",
-              "ref": "",
-              "recursive": true,
-              "is_local": true
-          },
-          "package_repo_path": "$GITHUB_WORKSPACE/sil-kit-pkg",
-          "version": {
-              "major": 4,
-              "minor": 0,
-              "patch": 52,
-              "suffix": "rc-5"
-          },
-          "work_dir": "${{ github.workspace }}/_i",
-          "keep_temp": true,
-          "output_dir": "${{ github.workspace }}/_o",
-          "platform": "Ubuntu-20.04"
-      }
 
 jobs:
   package_debian:
@@ -91,6 +70,28 @@ jobs:
           DEBFULLNAME: ${{ inputs.debian_fullname }}
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
+          BUILD_SETTINGS: |
+              {
+
+                  "SilKitInfo": {
+                      "url": "$GITHUB_WORKSPACE/sil-kit",
+                      "ref": "",
+                      "recursive": true,
+                      "is_local": true
+                  },
+                  "package_repo_path": "$GITHUB_WORKSPACE/sil-kit-pkg",
+                  "version": {
+                      "major": 4,
+                      "minor": 0,
+                      "patch": 53,
+                      "suffix": "rc-1"
+                  },
+                  "work_dir": "$GITHUB_WORKSPACE/_i",
+                  "keep_temp": true,
+                  "output_dir": "$GITHUB_WORKSPACE/_o",
+                  "platform": "Ubuntu-20.04"
+              }
+
         run: |
           mkdir -p $GITHUB_WORKSPACE/_i
           mkdir -p $GITHUB_WORKSPACE/_o
