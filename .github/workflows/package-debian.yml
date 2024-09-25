@@ -93,10 +93,10 @@ jobs:
           CI_RUN: "1"
         run: |
           echo "Running in $PWD"
-          mkdir -p /__w/sil-kit-pkg/sil-kit-pkg/_i
-          mkdir -p /__w/sil-kit-pkg/sil-kit-pkg/_o
-          echo $BUILD_SETTINGS >> $GH_WS/_i/build_settings.json
-          python3 $GH_WS/sil-kit-pkg/scripts/build_deb.py --build-cfg $GH_WS/_i/build_settings.json
+          mkdir _i
+          mkdir _o
+          echo $BUILD_SETTINGS >> _i/build_settings.json
+          python3 sil-kit-pkg/scripts/build_deb.py --build-cfg _i/build_settings.json
 
       - name: Test Package
         id: test
