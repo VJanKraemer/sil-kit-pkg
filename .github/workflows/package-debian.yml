@@ -93,7 +93,7 @@ jobs:
           CI_RUN: "1"
         run: |
           mkdir -p $GITHUB_WORKSPACE/_i
-          mkdir -p $GITHUB_WORKSPACE/_p
+          mkdir -p $GITHUB_WORKSPACE/_o
           stat _i
           stat _o
           echo GITHUB_WORKSPACE ${GITHUB_WORKSPACE}
