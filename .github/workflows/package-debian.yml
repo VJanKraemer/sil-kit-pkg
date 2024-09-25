@@ -35,12 +35,12 @@ env:
       {
 
           "SilKitInfo": {
-              "url": "${{ github.workspace }}/sil-kit.git",
+              "url": "$GITHUB_WORKSPACE/sil-kit.git",
               "ref": "",
               "recursive": true,
               "is_local": true
           },
-          "package_repo_path": "${{ github.workspace }}/sil-kit-pkg",
+          "package_repo_path": "$GITHUB_WORKSPACE/sil-kit-pkg",
           "version": {
               "major": 4,
               "minor": 0,
