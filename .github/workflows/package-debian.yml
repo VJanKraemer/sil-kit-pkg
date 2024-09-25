@@ -109,7 +109,7 @@ jobs:
       - name: Test Package
         id: test
         env:
-          DEB_DIR: .
+          DEB_DIR: ./_o
           PKG_DIR: ./sil-kit-pkg/
         run: |
           python3 sil-kit-pkg/tests/test_deb.py \

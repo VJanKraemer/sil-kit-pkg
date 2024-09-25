@@ -43,12 +43,12 @@ class BuildFlags:
     c_compiler: str
     cxx_compiler: str
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("build_deb")
 
 def create_arg_parser() -> ArgumentParser:
     ap = ArgumentParser("BuildPackages")
     ap.add_argument("--build-cfg", type=Path, required=True)
-    ap.add_argument("--verbose", action='store_true', required=False)
+    ap.add_argument("--verbose", "-v", action='store_true', required=False)
 
     return ap
 
@@ -60,7 +60,7 @@ def load_cfg(cfg_path: Path):
         return obj
 
 def cleanup(build_info: BuildInfo, exitCode: int):
-    
+
     silkit_info = build_info.silkit_info
     if silkit_info.is_local == False and silkit_info.silkit_source_path != None:
         shutil.rmtree(silkit_info.silkit_source_path, ignore_errors=True)
@@ -131,7 +131,7 @@ def clone_silkit(build_info: BuildInfo):
 
 
 def get_silkit_repo(build_info: BuildInfo):
-    
+
     # Check whether the repo is already checked out!
     repoPath = Path(build_info.silkit_info.silkit_source_url)
     logger.debug(f"Checking {repoPath}")
@@ -143,7 +143,7 @@ def get_silkit_repo(build_info: BuildInfo):
         if not git_dir.exists():
             logger.error("The sil-kit path does exist, but is no GIT repo! Exiting!")
             cleanup(build_info, 64)
-        
+
         # Copy sil-kit-dir
         try:
             shutil.copytree(repoPath, build_info.work_dir / repoPath)
@@ -158,7 +158,7 @@ def get_silkit_repo(build_info: BuildInfo):
         clone_silkit(build_info)
 
 def check_debian_directory(build_info: BuildInfo):
-    
+
     debian_path = build_info.silkit_pkg_path / 'debian'
     logger.debug(f"Checking {debian_path.expanduser()}")
     if not debian_path.expanduser().exists():
@@ -170,13 +170,13 @@ def check_debian_directory(build_info: BuildInfo):
 def get_deb_version(build_info: BuildInfo):
 
     pattern = re.compile('^libsilkit \(([0-9]+)\.([0-9]+)\.([0-9]+)-([0-9]+).*')
-    
+
     changelog_path = build_info.silkit_pkg_path.expanduser() / 'debian/changelog'
     logger.debug(f"Checking {changelog_path}")
     if not changelog_path.expanduser().exists():
         logger.error("Could not find Package Changelog! Exiting!")
         cleanup(build_info, 64)
-    
+
     with open(changelog_path) as f:
         for line in f:
             result = re.match(pattern, line)
@@ -203,7 +203,7 @@ def create_work_directory(build_info: BuildInfo) -> Path:
         exit(64)
 
 def create_orig_tarball(build_info: BuildInfo):
-    
+
     silkit_version = build_info.version
 
     if silkit_version == None:
@@ -222,7 +222,7 @@ def create_orig_tarball(build_info: BuildInfo):
         cleanup(build_info, 64)
 
 def copy_debian_dir(build_info: BuildInfo):
-    
+
     # Copy debian dir
     try:
         shutil.copytree(build_info.silkit_pkg_path.expanduser() / 'debian/', build_info.work_dir / 'sil-kit/debian')
@@ -240,7 +240,7 @@ def parse_platform(platform: str) -> str:
 
 
 def get_build_flags(ubuntu_version: str) -> BuildFlags:
-    
+
     logger.info(f"Building for platform: {ubuntu_version}")
     if ubuntu_version == "20.04":
         return BuildFlags(
@@ -260,7 +260,7 @@ def get_build_flags(ubuntu_version: str) -> BuildFlags:
                 add_debuild_flags="",
                 c_compiler="clang",
                 cxx_compiler="clang++")
-    
+
     return None
 
 def build_package(build_flags: BuildFlags, build_info: BuildInfo):
@@ -306,8 +306,12 @@ def main():
     arg_parser = create_arg_parser()
     args =arg_parser.parse_args()
 
+    level = logging.INFO;
+    log_fmt = '%(asctime)s %(name)s %(levelname)s: %(message)s'
     if args.verbose:
-        logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+        level = logging.DEBUG
+
+    logging.basicConfig(level=level, format=log_fmt)
 
     cfg = load_cfg(args.build_cfg)
     build_info = generate_buildinfo(cfg)
