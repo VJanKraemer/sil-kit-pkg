@@ -101,7 +101,7 @@ jobs:
           CI_RUN: "1"
         run: |
           touch $PWD/_i/build_cfg.json
-          echo $BUILD_SETTINGS | tee -a _i/build_cfg.json
+          echo "Hello Github Runner" | tee -a _i/build_cfg.json
           python3 sil-kit-pkg/scripts/build_deb.py \
           --build-cfg _i/build_cfg.json
           --verbose
