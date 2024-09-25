@@ -82,7 +82,7 @@ jobs:
 
       - name: Install cmake
         run: |
-          echo ${{ github.workspace }}
+          echo "Current workspace: $GW"
           sh sil-kit-pkg/.github/actions/fetch_cmake.sh
 
       - name: Build
@@ -92,6 +92,7 @@ jobs:
           DEBEMAIL: ${{ inputs.debian_fullname }}
           CI_RUN: "1"
         run: |
+          echo "Running in $PWD"
           mkdir -p $GH_WS/_i
           mkdir -p $GH_WS/_o
           echo $BUILD_SETTINGS >> $GH_WS/_i/build_settings.json
