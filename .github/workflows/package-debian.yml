@@ -88,16 +88,15 @@ jobs:
                       "patch": 53,
                       "suffix": "rc-1"
                   },
-                  "work_dir": "$PKG_WORKDIR",
+                  "work_dir": "${{ env.PKG_WORKDIR }}",
                   "keep_temp": true,
-                  "output_dir": "$PKG_OUTDIR",
+                  "output_dir": "${{ env.PKG_OUTDIR }}",
                   "platform": "Ubuntu-20.04"
               }
 
         run: |
           mkdir -p $GITHUB_WORKSPACE/$PKG_WORKDIR
           mkdir -p $GITHUB_WORKSPACE/$PKG_OUTDIR
-          stat $PKG_WORKDIR
           touch $PWD/$PKG_WORKDIR/build_cfg.json
           printf %s $BUILD_SETTINGS  > $PKG_WORKDIR/build_cfg.json
           python3 sil-kit-pkg/scripts/build_deb.py \
@@ -119,15 +118,16 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: |
-            ./$PKG_OUTDIR/*.dsc
-            ./$PKG_OUTDIR/*.build*
-            ./$PKG_OUTDIR/*.changes
-            ./$PKG_OUTDIR/*.*deb
+            ./${{ env.PKG_OUTDIR }}/*.dsc
+            ./${{ env.PKG_OUTDIR }}/*.build*
+            ./${{ env.PKG_OUTDIR }}/*.changes
+            ./${{ env.PKG_OUTDIR }}/*.*deb
           retention-days: 1
 
       - name: Prepare artifact
         if: inputs.silkit_pkg_ref != ''
         run: |
+          cd $PKG_OUTDIR
           zip -j ${{ env.ARTIFACT_NAME }}.zip ./*.dsc ./*.build* ./*.changes ./*.*deb
           sha256sum ./${{ env.ARTIFACT_NAME }}.zip > ./SHA256
 
@@ -156,6 +156,6 @@ jobs:
           tag_name: ${{ inputs.silkit_pkg_ref }}
           name: ${{ inputs.silkit_pkg_ref }}
           files: |
-            ./${{ env.ARTIFACT_NAME }}.zip
-            ./SHA256
+            ${{ env.PKG_OUTDIR }}/${{ env.ARTIFACT_NAME }}.zip
+            ${{ env.PKG_OUTDIR }}/SHA256
 
