@@ -74,21 +74,21 @@ jobs:
               {
 
                   "SilKitInfo": {
-                      "url": "$GITHUB_WORKSPACE/sil-kit",
+                      "url": "sil-kit",
                       "ref": "",
                       "recursive": true,
                       "is_local": true
                   },
-                  "package_repo_path": "$GITHUB_WORKSPACE/sil-kit-pkg",
+                  "package_repo_path": "sil-kit-pkg",
                   "version": {
                       "major": 4,
                       "minor": 0,
                       "patch": 53,
                       "suffix": "rc-1"
                   },
-                  "work_dir": "$GITHUB_WORKSPACE/_i",
+                  "work_dir": "_i",
                   "keep_temp": true,
-                  "output_dir": "$GITHUB_WORKSPACE/_o",
+                  "output_dir": "_o",
                   "platform": "Ubuntu-20.04"
               }
 
