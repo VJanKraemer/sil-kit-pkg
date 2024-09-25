@@ -31,6 +31,8 @@ on:
 
 env:
   ARTIFACT_NAME: silkit-ubuntu-20.04-deb
+  PKG_WORKDIR: _i
+  PKG_OUTDIR:  _o
 
 jobs:
   package_debian:
@@ -86,30 +88,26 @@ jobs:
                       "patch": 53,
                       "suffix": "rc-1"
                   },
-                  "work_dir": "_i",
+                  "work_dir": "$PKG_WORKDIR",
                   "keep_temp": true,
-                  "output_dir": "_o",
+                  "output_dir": "$PKG_OUTDIR",
                   "platform": "Ubuntu-20.04"
               }
 
         run: |
-          mkdir -p $GITHUB_WORKSPACE/_i
-          mkdir -p $GITHUB_WORKSPACE/_o
-          stat _i
-          stat _o
-          echo GITHUB_WORKSPACE ${GITHUB_WORKSPACE}
-          echo GH_WS ${GH_WS}
-          echo BUILD_SETTINGS $BUILD_SETTINGS
-          touch $PWD/_i/build_cfg.json
-          printf %s $BUILD_SETTINGS  > _i/build_cfg.json
+          mkdir -p $GITHUB_WORKSPACE/$PKG_WORKDIR
+          mkdir -p $GITHUB_WORKSPACE/$PKG_OUTDIR
+          stat $PKG_WORKDIR
+          touch $PWD/$PKG_WORKDIR/build_cfg.json
+          printf %s $BUILD_SETTINGS  > $PKG_WORKDIR/build_cfg.json
           python3 sil-kit-pkg/scripts/build_deb.py \
-          --build-cfg _i/build_cfg.json \
+          --build-cfg $PKG_WORKDIR/build_cfg.json \
           --verbose
 
       - name: Test Package
         id: test
         env:
-          DEB_DIR: ./_o
+          DEB_DIR: ./$PKG_OUTDIR
           PKG_DIR: ./sil-kit-pkg/
         run: |
           python3 sil-kit-pkg/tests/test_deb.py \
@@ -121,10 +119,10 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: |
-            ./*.dsc
-            ./*.build*
-            ./*.changes
-            ./*.*deb
+            ./$PKG_OUTDIR/*.dsc
+            ./$PKG_OUTDIR/*.build*
+            ./$PKG_OUTDIR/*.changes
+            ./$PKG_OUTDIR/*.*deb
           retention-days: 1
 
       - name: Prepare artifact
