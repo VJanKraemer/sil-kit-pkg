@@ -248,8 +248,7 @@ jobs:
 
 
       - name: Release artifact
-        with:
-
+        run:
           gh release create \
           ${{ steps.git_tag.outputs.git_tag }} \
           ${{ github.workspace }}/silkit-ubuntu-20.04-deb/* \
