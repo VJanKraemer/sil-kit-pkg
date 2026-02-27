@@ -366,8 +366,8 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          sha256sum silkit-almalinux-9-rpm/* >> ./SHA256
-          sha256sum silkit-ubuntu-20.04-deb/* >> ./SHA256
+          sha256sum silkit-almalinux-*-rpm/* >> ./SHA256
+          sha256sum silkit-ubuntu-*-deb/* >> ./SHA256
 
       - name: Prepare GIT tag
         id: git_tag
@@ -407,8 +407,8 @@ jobs:
           echo ${{ steps.git_tag.outputs.git_tag }}
           gh release create \
           ${{ steps.git_tag.outputs.git_tag }} \
-          ${{ github.workspace }}/silkit-ubuntu-20.04-deb/* \
-          ${{ github.workspace }}/silkit-almalinux-9-rpm/* \
+          ${{ github.workspace }}/silkit-ubuntu-*-deb/* \
+          ${{ github.workspace }}/silkit-almalinux-*-rpm/* \
           SHA256 \
           --verify-tag \
           ${{ steps.git_tag.outputs.prerelease }} \
